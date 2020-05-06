@@ -21,7 +21,7 @@ ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
     return 1;
 }
 
-ssize_t dev_write(struct file *filp, char *buffer, size_t len, loff_t *offset){
+ssize_t dev_write(struct file *filp, const char *buffer, size_t len, loff_t *offset){
     printk(KERN_ALERT "Write %ld?\n",len);
     return 1;
 }
@@ -54,7 +54,7 @@ static int dev_init(void){
     dev_num = MKDEV(major, minor);
     device = cdev_alloc();
 
-    result = register_chrdev( dev_num, device_name, &fileOps );
+    result = register_chrdev( 500, device_name, &fileOps );
 
     if (result != 0)
     {
