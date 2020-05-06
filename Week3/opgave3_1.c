@@ -1,7 +1,11 @@
 #include <linux/init.h>
 #include <linux/module.h>
+#include <linux/cdev.h>
 MODULE_LICENSE("Dual BSD/GPL");
 
+const int major = 700;
+const int minor = 0;
+static const char device_name[] = "driver-van-max";
 
 struct file_operations fileOps = {
         .read = dev_read,
@@ -9,6 +13,8 @@ struct file_operations fileOps = {
         .open = dev_open,
         .release = dev_release,
         };
+
+static struct cdev* device;
 
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
@@ -36,9 +42,21 @@ int dev_release(struct inode *inode, struct file *filp) {
 static int dev_init(void){
     printk(KERN_ALERT "init device\n");
 
-//    cdev = cdev_alloc();
+    int result = 0;
+    dev_t dev_num;
 
-    return 0;
+    dev_num = MKDEV(major, minor);
+    device = cdev_alloc();
+
+    result = register_chrdev( dev_num, device_name, &fileOps );
+
+    if (result != 0)
+    {
+        printk(KERN_ALERT "init failed!\n");
+    }
+
+
+    return result;
     }
 static void dev_exit(void){
     printk(KERN_ALERT "Goodbye, world\n");
