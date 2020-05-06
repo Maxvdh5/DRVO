@@ -10,6 +10,7 @@ MODULE_LICENSE("Dual BSD/GPL");
 
 const int major = 500;
 const int minor = 0;
+const int amount = 0;
 static const char device_name[] = "driver-van-max";
 
 
@@ -54,7 +55,7 @@ static int dev_init(void){
     dev_num = MKDEV(major, minor);
     device = cdev_alloc();
 
-    result = register_chrdev_region( dev_num, device_name, &fileOps );
+    result = register_chrdev_region( dev_num, amount, device_name );
 
     if (result != 0)
     {
@@ -66,7 +67,7 @@ static int dev_init(void){
     }
 static void dev_exit(void){
     printk(KERN_ALERT "Goodbye, world\n");
-    unregister_chrdev_region(dev_num, device_name);
+    unregister_chrdev_region(dev_num, amount);
     }
     
     
