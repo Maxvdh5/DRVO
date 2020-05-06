@@ -12,12 +12,6 @@ const int major = 700;
 const int minor = 0;
 static const char device_name[] = "driver-van-max";
 
-struct file_operations fileOps = {
-        .read = dev_read,
-        .write = dev_write,
-        .open = dev_open,
-        .release = dev_release,
-        };
 
 static struct cdev* device;
 
@@ -43,6 +37,13 @@ int dev_release(struct inode *inode, struct file *filp) {
 
     return 0;
 }
+
+struct file_operations fileOps = {
+        .read = dev_read,
+        .write = dev_write,
+        .open = dev_open,
+        .release = dev_release,
+};
 
 static int dev_init(void){
     printk(KERN_ALERT "init device\n");
