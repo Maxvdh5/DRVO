@@ -1,6 +1,11 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/cdev.h>
+#include <linux/fs.h> 	     /* file stuff */
+#include <linux/kernel.h>    /* printk() */
+#include <linux/errno.h>     /* error codes */
+#include <linux/module.h>  /* THIS_MODULE */
+#include <linux/cdev.h>      /* char device stuff */
 MODULE_LICENSE("Dual BSD/GPL");
 
 const int major = 700;
