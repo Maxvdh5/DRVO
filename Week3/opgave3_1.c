@@ -51,8 +51,7 @@ static int dev_init(void){
     dev_t dev_num;
 
     dev_num = MKDEV(major, minor);
-    device = cdev_alloc();
-    device->ops = &fileOps;
+
 
     result = register_chrdev_region( dev_num, amount, device_name );
 
@@ -60,6 +59,11 @@ static int dev_init(void){
     {
         printk(KERN_ALERT "init failed!\n");
     }
+
+    device = cdev_alloc();
+
+    cdev_init(&device->cdev, &fileOps);
+    device->ops = &fileOps;
 
     int err = cdev_add(&device, dev_num, 1){
         if(err){
