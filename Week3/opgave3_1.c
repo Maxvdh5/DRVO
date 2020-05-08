@@ -4,8 +4,6 @@
 #include <linux/fs.h> 	     /* file stuff */
 #include <linux/kernel.h>    /* printk() */
 #include <linux/errno.h>     /* error codes */
-#include <linux/module.h>  /* THIS_MODULE */
-#include <linux/cdev.h>      /* char device stuff */
 MODULE_LICENSE("Dual BSD/GPL");
 
 const int major = 500;
@@ -54,6 +52,7 @@ static int dev_init(void){
 
     dev_num = MKDEV(major, minor);
     device = cdev_alloc();
+    device->ops = &fileOps;
 
     result = register_chrdev_region( dev_num, amount, device_name );
 
@@ -62,11 +61,22 @@ static int dev_init(void){
         printk(KERN_ALERT "init failed!\n");
     }
 
+    int err = cdev_add(&device, dev_num, 1){
+        if(err){
+            printK(KERN_ALERT "Error %d adding chdev", err);
+        }
+    }
+
+    cdev_add
+
 
     return result;
     }
 static void dev_exit(void){
     printk(KERN_ALERT "Goodbye, world\n");
+    dev_t dev_num;
+
+    dev_num = MKDEV(major, minor);
     unregister_chrdev_region(dev_num, amount);
     }
     
