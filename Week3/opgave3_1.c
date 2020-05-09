@@ -12,8 +12,8 @@ const int amount = 0;
 static const char device_name[] = "driver-van-max";
 
 
-static struct cdev* device;
-dev_t dev_num;
+static struct cdev device;
+static dev_t dev_num;
 
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
@@ -49,12 +49,9 @@ struct file_operations fileOps = {
 static int dev_init(void){
     printk(KERN_ALERT "init device\n");
 
-
-
     dev_num = MKDEV(major, minor);
 
-
-    if (register_chrdev_region(&dev_num, amount, device_name ) < 0)
+    if (alloc_chrdev_region(&dev_num, amount, device_name ) < 0)
     {
         printk(KERN_ALERT "init failed!\n");
         return -1;
@@ -67,10 +64,10 @@ static int dev_init(void){
 //    }
 
     cdev_init(&device, &fileOps);
-    if (cdev_add(&device, device_name, 1) < 0)
+    if (cdev_add(&device, device_num, 1) < 0)
     {
         printK(KERN_ALERT "Error %d adding chdev", err);
-        unregister_chrdev_region(first, 1);
+        unregister_chrdev_region(dev_num, 1);
         return -1;
     }
 
