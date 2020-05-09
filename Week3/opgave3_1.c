@@ -10,6 +10,7 @@ int major;
 const int minor = 0;
 const int amount = 0;
 static const char device_name[] = "driver-van-max";
+static struct class *cl;
 
 
 static struct cdev device;
@@ -57,19 +58,27 @@ static int dev_init(void){
     printk(KERN_ALERT "init device\n");
     printk(KERN_ALERT "Parameter1=%d Parameter2=%d\n", FirstInt, SecondInt);
 
-    dev_num = MKDEV(major, minor);
 
     if (alloc_chrdev_region(&dev_num, minor, amount, device_name ) < 0)
     {
         printk(KERN_ALERT "init failed!\n");
         return -1;
     }
-//    if ((cl = class_create(THIS_MODULE, device_name)) == NULL)
-//    {
-//        printk(KERN_ALERT "cannot create class\n");
-//        unregister_chrdev_region(dev_num, 1);
-//        return -1;
-//    }
+    if ((cl = class_create(THIS_MODULE, device_name)) == NULL)
+    {
+        printk(KERN_ALERT "cannot create class\n");
+        unregister_chrdev_region(dev_num, 1);
+        return -1;
+    }
+
+    if (device_create(cl, NULL, first, NULL, "Character-driver-device") == NULL)
+    {
+        printk(KERN_ALERT "cannot create device\n");
+        class_destroy(cl);
+        unregister_chrdev_region(first, 1);
+        return -1;
+    }
+
     major = MAJOR(dev_num);
     printk(KERN_ALERT "major number: %d!\n", major);
     cdev_init(&device, &fileOps);
@@ -84,9 +93,9 @@ static int dev_init(void){
     }
 static void dev_exit(void){
     printk(KERN_ALERT "Goodbye, world\n");
-    dev_t dev_num;
-
-    dev_num = MKDEV(major, minor);
+    cdev_del(&device);
+    device_destroy(cl, dev_num);
+    class_destroy(cl);
     unregister_chrdev_region(dev_num, amount);
     }
     
