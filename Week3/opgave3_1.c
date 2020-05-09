@@ -6,7 +6,7 @@
 #include <linux/errno.h>     /* error codes */
 MODULE_LICENSE("Dual BSD/GPL");
 
-const int major = 500;
+int major;
 const int minor = 0;
 const int amount = 0;
 static const char device_name[] = "driver-van-max";
@@ -16,11 +16,11 @@ static struct cdev device;
 static dev_t dev_num;
 
 int FirstInt;
-module_param(FirstInt,int,0666);
+module_param(FirstInt,int,0660);
 
 static int SecondInt;
-static char *SecondIntName = "SecondInt";
-module_param_named(SecondIntName,SecondInt,int,0666);
+static char *SecondIntName;
+module_param_named(SecondIntName,SecondInt,int,0660);
 
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
@@ -59,7 +59,7 @@ static int dev_init(void){
 
     dev_num = MKDEV(major, minor);
 
-    if (register_chrdev_region(&dev_num, amount, device_name ) < 0)
+    if (major = alloc_chrdev_region(&dev_num, minor, amount, device_name ) < 0)
     {
         printk(KERN_ALERT "init failed!\n");
         return -1;
@@ -70,7 +70,7 @@ static int dev_init(void){
 //        unregister_chrdev_region(dev_num, 1);
 //        return -1;
 //    }
-
+    printk(KERN_ALERT "major number: %d!\n", major);
     cdev_init(&device, &fileOps);
     if (cdev_add(&device, dev_num, 1) < 0)
     {
