@@ -59,7 +59,7 @@ static int dev_init(void){
 
     dev_num = MKDEV(major, minor);
 
-    if (major = alloc_chrdev_region(&dev_num, minor, amount, device_name ) < 0)
+    if (alloc_chrdev_region(&dev_num, minor, amount, device_name ) < 0)
     {
         printk(KERN_ALERT "init failed!\n");
         return -1;
@@ -70,6 +70,7 @@ static int dev_init(void){
 //        unregister_chrdev_region(dev_num, 1);
 //        return -1;
 //    }
+    major = MAJOR(dev_num);
     printk(KERN_ALERT "major number: %d!\n", major);
     cdev_init(&device, &fileOps);
     if (cdev_add(&device, dev_num, 1) < 0)
