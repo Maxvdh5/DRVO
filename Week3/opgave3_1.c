@@ -15,11 +15,12 @@ static const char device_name[] = "driver-van-max";
 static struct cdev device;
 static dev_t dev_num;
 
-int FirstInt
+int FirstInt;
 module_param(FirstInt,int,0666);
 
-int SecondInt;
-module_param_named("SecondInt",SecondtInt,int,0666);
+static int SecondInt;
+static char *SecondIntName = "SecondInt";
+module_param_named(SecondIntName,SecondInt,int,0666);
 
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
