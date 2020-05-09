@@ -13,6 +13,7 @@ static const char device_name[] = "driver-van-max";
 
 
 static struct cdev* device;
+dev_t dev_num;
 
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
@@ -38,6 +39,7 @@ int dev_release(struct inode *inode, struct file *filp) {
 }
 
 struct file_operations fileOps = {
+        .owner = THIS_MODULE,
         .read = dev_read,
         .write = dev_write,
         .open = dev_open,
@@ -47,34 +49,32 @@ struct file_operations fileOps = {
 static int dev_init(void){
     printk(KERN_ALERT "init device\n");
 
-    int result = 0;
-    dev_t dev_num;
+
 
     dev_num = MKDEV(major, minor);
 
 
-    result = register_chrdev_region( dev_num, amount, device_name );
-
-    if (result != 0)
+    if (register_chrdev_region(&dev_num, amount, device_name ) < 0)
     {
         printk(KERN_ALERT "init failed!\n");
+        return -1;
+    }
+//    if ((cl = class_create(THIS_MODULE, device_name)) == NULL)
+//    {
+//        printk(KERN_ALERT "cannot create class\n");
+//        unregister_chrdev_region(dev_num, 1);
+//        return -1;
+//    }
+
+    cdev_init(&device, &fileOps);
+    if (cdev_add(&device, device_name, 1) < 0)
+    {
+        printK(KERN_ALERT "Error %d adding chdev", err);
+        unregister_chrdev_region(first, 1);
+        return -1;
     }
 
-    device = cdev_alloc();
-
-    cdev_init(&device->cdev, &fileOps);
-    device->ops = &fileOps;
-
-    int err = cdev_add(&device, dev_num, 1){
-        if(err){
-            printK(KERN_ALERT "Error %d adding chdev", err);
-        }
-    }
-
-    cdev_add
-
-
-    return result;
+    return 0;
     }
 static void dev_exit(void){
     printk(KERN_ALERT "Goodbye, world\n");
