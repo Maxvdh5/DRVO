@@ -23,6 +23,8 @@ static int SecondInt;
 static char *SecondIntName;
 module_param_named(SecondIntName,SecondInt,int,0660);
 
+int OpenCount = 0;
+
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
     printk(KERN_ALERT "Read %ld?\n",len);
@@ -36,6 +38,8 @@ ssize_t dev_write(struct file *filp, const char *buffer, size_t len, loff_t *off
 
 int dev_open(struct inode *inode, struct file *filp) {
     printk(KERN_ALERT "Opened device\n");
+    OpenCount++;
+    printk(KERN_ALERT "Open Count: %d\n", OpenCount);
 
     return 0;
 }
