@@ -4,6 +4,7 @@
 #include <linux/fs.h> 	     /* file stuff */
 #include <linux/kernel.h>    /* printk() */
 #include <linux/errno.h>     /* error codes */
+#include <linux/proc_fs.h>
 MODULE_LICENSE("Dual BSD/GPL");
 
 int major;
@@ -33,7 +34,7 @@ ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *ppos){
     ssize_t bytes;
 
 //    max bytes never < buff_size
-    if (buff_size < count){
+    if (buff_size < len){
         bytes = buff_size;
     } else {
         bytes = len;
@@ -65,7 +66,7 @@ ssize_t dev_write(struct file *filp, const char *buffer, size_t len, loff_t *ppo
 //  reset the memory buffers
     memset(char_buff, 0, MAX_SIZE);
 
-    printk("bytes received:%d\n",count);
+    printk("bytes received:%d\n",len);
 
     int result;
     result = copy_from_user(char_buff,buffer,len);
@@ -100,6 +101,14 @@ struct file_operations fileOps = {
         .open = dev_open,
         .release = dev_release,
 };
+
+static void dev_exit(void){
+    printk(KERN_ALERT "Goodbye, world\n");
+    cdev_del(&device);
+    device_destroy(cl, dev_num);
+    class_destroy(cl);
+    unregister_chrdev_region(dev_num, amount);
+}
 
 static int dev_init(void){
     printk(KERN_ALERT "init device\n");
@@ -144,7 +153,7 @@ static int dev_init(void){
     char_buff = kmalloc(MAX_SIZE, GFP_KERNEL); // GFP_KERNEL --> Allocate normal kernel ram. May sleep.
 
 //    check if allocation was successful
-    if(!read_buff||!write_buff){
+    if(!char_buff){
         printk(KERN_ALERT "could not allocate room for memory buffers");
         dev_exit(); // goto dev_exit to cleanup all the created memory
         return -1;
@@ -155,14 +164,6 @@ static int dev_init(void){
 
     return 0;
 }
-static void dev_exit(void){
-    printk(KERN_ALERT "Goodbye, world\n");
-    cdev_del(&device);
-    device_destroy(cl, dev_num);
-    class_destroy(cl);
-    unregister_chrdev_region(dev_num, amount);
-}
-
 
 module_init(dev_init);
 module_exit(dev_exit);
