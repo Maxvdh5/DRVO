@@ -27,10 +27,12 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    for(int i = 0; SEEK_END-i >= 0; i++){
+    for(int i = 1; SEEK_END-i >= 0; i++){
         fseek(fp,i,SEEK_END);
         printf("%c", fgetc(fp));
     }
+    fseek(fp,0,SEEK_END);
+    printf("%c", fgetc(fp));
 
 
     fclose(fp);

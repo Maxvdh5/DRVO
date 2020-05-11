@@ -128,6 +128,16 @@ static loff_t dev_lseek(struct file *filp, loff_t offset, int orig){
     return new_pos;
 }
 
+long dev_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
+    printk(KERN_INFO "using \n");
+    switch (cmd) {
+        case 0 :        // HELLO_WORLD
+            printk(KERN_INFO "Hello World from ioctl!\n");
+            break;
+    }
+    return 0;
+}
+
 struct file_operations fileOps = {
         .owner = THIS_MODULE,
         .read = dev_read,
@@ -135,6 +145,7 @@ struct file_operations fileOps = {
         .open = dev_open,
         .release = dev_release,
         .llseek = dev_lseek,
+        .unlocked_ioctl = dev_ioctl,
 };
 
 static void dev_exit(void){
