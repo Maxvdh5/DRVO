@@ -124,6 +124,7 @@ static loff_t dev_lseek(struct file *filp, loff_t offset, int orig){
     if (new_pos < 0)
         new_pos = 0;
     filp->f_pos = new_pos;
+    printk(KERN_INFO "the new pos: %d\n", filp->f_pos);
     return new_pos;
 }
 
