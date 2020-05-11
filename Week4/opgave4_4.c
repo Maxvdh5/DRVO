@@ -119,11 +119,11 @@ static loff_t dev_lseek(struct file *filp, loff_t offset, int orig){
             new_pos = MAX_SIZE - offset;
             break;
     }
-    if (new_pos > MAX_SIZE)
-        new_pos = MAX_SIZE;
+    if (new_pos > buff_size)
+        new_pos = buff_size;
     if (new_pos < 0)
         new_pos = 0;
-    filp->f_pos = new_pos;
+    filp->f_pos = buff_size;
     printk(KERN_INFO "the new pos: %d\n", filp->f_pos);
     return new_pos;
 }
