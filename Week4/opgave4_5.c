@@ -131,7 +131,7 @@ static loff_t dev_lseek(struct file *filp, loff_t offset, int orig){
 long dev_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
     printk(KERN_INFO "using \n");
     switch (cmd) {
-        case 0 :        // HELLO_WORLD
+        case HELLO_WORLD :
             printk(KERN_INFO "Hello World from ioctl!\n");
             break;
     }
