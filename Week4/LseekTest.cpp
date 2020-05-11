@@ -27,9 +27,8 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-
     for(int i = 0; SEEK_END-i >= 0; i++){
-        lseek(fp,i,SEEK_END);
+        fseek(fp,i,SEEK_END);
         printf("%c", fgetc(fp));
     }
 
