@@ -101,12 +101,39 @@ int dev_release(struct inode *inode, struct file *filp) {
     return 0;
 }
 
+
+// this function is used in user space to change the file pointer ppos
+//
+static loff_t dev_lseek(struct file *filp, loff_t offset, int orig){
+    loff_t new_pos = 0;
+
+    printk(KERN_INFO "using lseek to change ppos\n");
+    switch (orig) {
+        case 0 :        // SEEK_SET
+            new_pos = offset;
+            break;
+        case 1 :        // SEEK_CUR
+            new_pos = filp->f_pos + offset;
+            break;
+        case 2 :        // SEEK_END
+            new_pos = MAX_SIZE - offset;
+            break;
+    }
+    if (new_pos > MAX_SIZE)
+        new_pos = MAX_SIZEE;
+    if (new_pos < 0)
+        new_pos = 0;
+    filp->f_pos = new_pos;
+    return new_pos;
+}
+
 struct file_operations fileOps = {
         .owner = THIS_MODULE,
         .read = dev_read,
         .write = dev_write,
         .open = dev_open,
         .release = dev_release,
+        .llseek = dev_lseek,
 };
 
 static void dev_exit(void){
