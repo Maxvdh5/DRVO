@@ -42,7 +42,7 @@ int buff_size = 0;
 
 
 // interrupt stuff
-static devfs_handle_t handle;
+//static devfs_handle_t handle;
 
 
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *ppos){
@@ -144,7 +144,7 @@ static loff_t dev_lseek(struct file *filp, loff_t offset, int orig){
 long dev_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
     printk(KERN_INFO "using \n");
     switch (cmd) {
-        case HELLO_WORLD :
+        case 1 :
             printk(KERN_INFO "Hello World from ioctl!\n");
             break;
     }
@@ -217,11 +217,11 @@ static int dev_init(void){
 
 //    hook interrupt to function
 
-    if (request_irq(IRQLINE, kbd_irq_handler, IRQ_SHARED,
-                    device_name, (void*) &handle) < 0) {
+    if (request_irq(IRQLINE, irq_handler, IRQF_SHARED,
+                    device_name, &fileOps) < 0) {
         printk(KERN_CRIT "%s: interrupt line busy\n",device_name);
         dev_exit(); // goto dev_exit to cleanup all the created memory
-        return -1
+        return -1;
     }
 
 //    allocate memory for buffers
