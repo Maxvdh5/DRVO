@@ -7,6 +7,13 @@
 #include <linux/proc_fs.h>
 #include <linux/uaccess.h>
 #include <linux/slab.h>
+#include <linux/irq.h>
+#include <linux/io.h>
+#include <linux/irqdomain.h>
+#include <linux/interrupt.h>
+#include <linux/of.h>
+#include <linux/of_address.h>
+
 MODULE_LICENSE("Dual BSD/GPL");
 
 #define IRQLINE 1
