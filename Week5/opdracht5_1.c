@@ -152,10 +152,11 @@ long dev_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
 }
 
 int interrupt_count = 0;
-static void irq_handler(int irq, void* dev_id, struct pt_regs *regs)
+irqreturn_t irq_handler(int irq, void* dev_id, struct pt_regs *regs)
 {
     interrupt_count++;
     printk(KERN_INFO "Interrupt %d\n", interrupt_count);
+    return IRQ_HANDLED;
 }
 
 struct file_operations fileOps = {
@@ -170,6 +171,7 @@ struct file_operations fileOps = {
 
 static void dev_exit(void){
     printk(KERN_ALERT "Goodbye, world\n");
+    free_irq(IRQLINE,&fileOps);
     cdev_del(&device);
     device_destroy(cl, dev_num);
     class_destroy(cl);
