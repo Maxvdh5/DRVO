@@ -15,7 +15,6 @@ static const char device_name[] = "driver-van-max";
 static struct class *cl;
 
 static struct timer_list timer;
-DEFINE_TIMER(timer, timer_callback, 0, 0);
 
 
 static struct cdev device;
@@ -89,8 +88,13 @@ static int dev_init(void){
         return -1;
     }
 
-    /* setup timer interval to 200 msecs */
-    mod_timer(&timer, jiffies + msecs_to_jiffies(200));
+    /* setup timer interval to 150 msecs */
+    init_timer_on_stack(&timer);
+    timer.expires = jiffies + msecs_to_jiffies(150);
+    timer.data = 0;
+    timer.function = timer_callback;
+
+    add_timer(&timer);
 
     major = MAJOR(dev_num);
     printk(KERN_ALERT "major number: %d!\n", major);
@@ -109,6 +113,7 @@ static void dev_exit(void){
     cdev_del(&device);
     device_destroy(cl, dev_num);
     class_destroy(cl);
+    del_timer(&timer);
     unregister_chrdev_region(dev_num, amount);
 }
 
