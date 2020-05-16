@@ -14,6 +14,7 @@ static const char device_name[] = "driver-van-max";
 static struct class *cl;
 
 static struct timer_list timer;
+DEFINE_TIMER(timer, timer_callback, 0, 0);
 
 
 static struct cdev device;
@@ -87,9 +88,6 @@ static int dev_init(void){
         return -1;
     }
 
-    //setup timer
-    /* setup your timer to call my_timer_callback */
-    setup_timer(&timer, timer_callback, 0);
     /* setup timer interval to 200 msecs */
     mod_timer(&timer, jiffies + msecs_to_jiffies(200));
 
