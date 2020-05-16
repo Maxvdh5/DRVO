@@ -5,6 +5,7 @@
 #include <linux/kernel.h>    /* printk() */
 #include <linux/errno.h>     /* error codes */
 #include <linux/timer.h>
+#include <linux/jiffies.h>
 MODULE_LICENSE("Dual BSD/GPL");
 
 int major;
