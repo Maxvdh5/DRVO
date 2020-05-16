@@ -152,7 +152,7 @@ long dev_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
 }
 
 int interrupt_count = 0;
-irqreturn_t irq_handler(int irq, void* dev_id, struct pt_regs *regs)
+static irqreturn_t irq_handler(int irq, void* dev_id)
 {
     interrupt_count++;
     printk(KERN_INFO "Interrupt %d\n", interrupt_count);
