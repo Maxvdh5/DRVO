@@ -14,7 +14,7 @@ const int amount = 0;
 static const char device_name[] = "driver-van-max";
 static struct class *cl;
 
-static struct timer_list timer;
+static struct timer_list my_timer;
 
 
 static struct cdev device;
@@ -89,12 +89,13 @@ static int dev_init(void){
     }
 
     /* setup timer interval to 150 msecs */
-    init_timer_on_stack(&timer);
-    timer.expires = jiffies + msecs_to_jiffies(150);
-    timer.data = 0;
-    timer.function = timer_callback;
+//    init_timer_on_stack(&timer);
+//    timer.expires = jiffies + msecs_to_jiffies(150);
+//    timer.data = 0;
+//    timer.function = timer_callback;
 
-    add_timer(&timer);
+    setup_timer(&my_timer, timer_callback, 0);
+    mod_timer(&my_timer, jiffies + msecs_to_jiffies(150));
 
     major = MAJOR(dev_num);
     printk(KERN_ALERT "major number: %d!\n", major);
