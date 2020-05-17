@@ -34,7 +34,8 @@ ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
 }
 
 ssize_t dev_write(struct file *filp, const char *buffer, size_t len, loff_t *offset){
-    printk(KERN_ALERT "Write %ld?\n",len);
+    printk(KERN_ALERT "Write wit process id %d\n",current->pid);
+    mod_timer(&my_timer, jiffies + msecs_to_jiffies(150));
     return 1;
 }
 
@@ -50,9 +51,9 @@ int dev_release(struct inode *inode, struct file *filp) {
     return 0;
 }
 
-void timer_callback( unsigned long data )
+void timer_callback( struct timer_list  *timer )
 {
-    printk(KERN_ALERT " timer callback\n");
+    printk(KERN_ALERT "timer callback with process id %d\n", current->pid);
 }
 
 struct file_operations fileOps = {
@@ -94,8 +95,7 @@ static int dev_init(void){
 //    timer.data = 0;
 //    timer.function = timer_callback;
 
-    setup_timer(&my_timer, timer_callback, 0);
-    mod_timer(&my_timer, jiffies + msecs_to_jiffies(150));
+    timer_setup(&my_timer, timer_callback, 0);
 
     major = MAJOR(dev_num);
     printk(KERN_ALERT "major number: %d!\n", major);
