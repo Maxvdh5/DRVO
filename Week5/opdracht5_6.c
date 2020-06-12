@@ -54,6 +54,7 @@ int dev_release(struct inode *inode, struct file *filp) {
 void timer_callback( struct timer_list  *timer )
 {
     printk(KERN_ALERT "timer callback with process id %d\n", current->pid);
+    mod_timer(&my_timer, jiffies + msecs_to_jiffies(150));
 }
 
 struct file_operations fileOps = {

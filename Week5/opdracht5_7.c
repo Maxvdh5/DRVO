@@ -28,6 +28,16 @@ static char *SecondIntName;
 module_param_named(SecondIntName,SecondInt,int,0660);
 
 
+// timer callback
+struct timer_container {
+    int m_data;
+    struct timer_listm_timer;
+};
+
+struct timer_data {
+
+};
+
 ssize_t dev_read(struct file *filp, char *buffer, size_t len, loff_t *offset){
     printk(KERN_ALERT "Read %ld?\n",len);
     return 1;
@@ -54,6 +64,7 @@ int dev_release(struct inode *inode, struct file *filp) {
 void timer_callback( struct timer_list  *timer )
 {
     printk(KERN_ALERT "timer callback with process id %d\n", current->pid);
+    mod_timer(&my_timer, jiffies + msecs_to_jiffies(150));
 }
 
 struct file_operations fileOps = {
